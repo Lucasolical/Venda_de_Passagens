@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  FALA TU, MEU CONSAGRADO.
+  <style>
+  html, body {
+    height: 100%;          /* garante que ambos ocupem 100% da altura */
+    margin: 0;             /* remove margens padrão */
+    padding: 0;            /* remove espaçamento interno */
+  }
+
+  body {
+    background-image: url("{{ url_for('static', filename='home.jpg') }}");
+    background-size: cover;       /* cobre toda a tela */
+    background-position: center;  /* centraliza */
+    background-repeat: no-repeat; /* evita repetição */
+    background-attachment: fixed; /* opcional: cria efeito de fundo fixo */
+  }
+  </style>
+</body>
+</html>
