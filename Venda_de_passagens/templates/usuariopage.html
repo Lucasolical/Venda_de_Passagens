@@ -6,6 +6,42 @@
     <title>{{nome_usuario}} page</title>
 </head>
 <body>
-    <p>Fala Tu {{nome_usuario}}</p>
+    <style>
+    /* Fundo */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-image: url("{{ url_for('static', filename='subarashi.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+
+      display: flex;              /* permite centralização */
+      justify-content: flex-end;  /* posiciona o container à direita */
+      align-items: center;        /* centraliza verticalmente */
+      font-family: Arial, sans-serif;
+    }
+
+    .welcome-box {
+      position: absolute;
+      top: 50px;          /* distância do topo */
+      left: 70px;         /* distância da esquerda */
+      background-color: rgba(255, 255, 255, 0.7); /* fundo branco translúcido */
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+    }
+    </style>
+    <div class="welcome-box">
+        Seja bem-vindo {{nome_usuario}}!
+    </div>
 </body>
 </html>
