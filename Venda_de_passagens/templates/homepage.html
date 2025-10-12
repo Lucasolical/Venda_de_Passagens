@@ -1,26 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tela de Login</title>
+  <style>
+    /* Fundo */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-image: url("{{ url_for('static', filename='home.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+
+      display: flex;              /* permite centralização */
+      justify-content: flex-end;  /* posiciona o container à direita */
+      align-items: center;        /* centraliza verticalmente */
+      font-family: Arial, sans-serif;
+    }
+
+    /* Container de login */
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.9); /* leve transparência */
+      padding: 40px;
+      border-radius: 10px;
+      width: 300px;
+      margin-right: 80px; /* distância da borda direita */
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-  FALA TU, MEU CONSAGRADO.
-  <style>
-  html, body {
-    height: 100%;          /* garante que ambos ocupem 100% da altura */
-    margin: 0;             /* remove margens padrão */
-    padding: 0;            /* remove espaçamento interno */
-  }
-
-  body {
-    background-image: url("{{ url_for('static', filename='home.jpg') }}");
-    background-size: cover;       /* cobre toda a tela */
-    background-position: center;  /* centraliza */
-    background-repeat: no-repeat; /* evita repetição */
-    background-attachment: fixed; /* opcional: cria efeito de fundo fixo */
-  }
-  </style>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+      <input type="text" name="username" placeholder="E-mail ou nome de usuário" required>
+      <input type="password" name="password" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
 </body>
 </html>
