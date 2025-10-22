@@ -1,11 +1,29 @@
-voos = [
-    {
-     'Embarque': ['Brasil','Brasil','Brasil'],
-     'Desembarque': ['Espanha','India','Mexico'],
-     'Horario': ['15:30','12:30','8:00'],
-     'Companhia Aerea': ["KLM",'KLM','KLM']
+voos = {
+    "ED101": {
+        "origem": "Brasil",         
+        "destino": "Espanha",       
+        "milhas": 4500,                  
+        "preco": 2500.00,                
+        "aeronave": "Airbus A330",         
+        "assentos": 250                 
+    },
+    "ED102": {
+        "origem": "Brasil (GRU)",
+        "destino": "India (DEL)",
+        "milhas": 14000,
+        "preco": 3500.00,
+        "aeronave": "Boeing 777",
+        "assentos": 300
+    },
+    "ED103": {
+        "origem": "Brasil (GIG)",
+        "destino": "Mexico (MEX)",
+        "milhas": 7700,
+        "preco": 2800.00,
+        "aeronave": "Boeing 787",
+        "assentos": 280
     }
-]
+}
 
 logins = [
         {'nome': 'Lucas', 'senha': 'matoseco'},

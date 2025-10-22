@@ -22,3 +22,7 @@ def contatos():
 @app.route("/usuario/<nome_usuario>")
 def usuarios(nome_usuario):
     return render_template("usuariopage.html", nome_usuario = nome_usuario)
+
+@app.route("/voos")
+def listar_voos():
+    return render_template("listar_voos.html", lista_de_voos=voos)
