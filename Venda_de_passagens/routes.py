@@ -26,3 +26,10 @@ def usuarios(nome_usuario):
 @app.route("/voos")
 def listar_voos():
     return render_template("listar_voos.html", lista_de_voos=voos)
+
+
+@app.route("/usuario/<nome_usuario>/voos")
+def listar_voos_para_usuario(nome_usuario):
+    return render_template("listar_voos.html", 
+                           lista_de_voos=voos,
+                           nome_usuario=nome_usuario)   

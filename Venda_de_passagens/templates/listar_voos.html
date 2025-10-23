@@ -42,7 +42,16 @@
             </tbody>
         </table>
         
-        <a href="/usuario" class="btn btn-primary mt-3">Voltar ao Início</a>
+        {% if nome_usuario %}
+            <a href="{{ url_for('usuarios', nome_usuario=nome_usuario) }}" class="btn btn-primary mt-3">
+                Voltar para a Página do Usuário
+            </a>
+        {% else %}
+            <a href="{{ url_for('homepage') }}" class="btn btn-secondary mt-3">
+                Voltar ao Início
+            </a>
+        {% endif %}
+        
     </div>
 
 </body>

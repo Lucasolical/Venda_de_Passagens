@@ -8,16 +8,16 @@ voos = {
         "assentos": 250                 
     },
     "ED102": {
-        "origem": "Brasil (GRU)",
-        "destino": "India (DEL)",
+        "origem": "Brasil",
+        "destino": "India",
         "milhas": 14000,
         "preco": 3500.00,
         "aeronave": "Boeing 777",
         "assentos": 300
     },
     "ED103": {
-        "origem": "Brasil (GIG)",
-        "destino": "Mexico (MEX)",
+        "origem": "Brasil ",
+        "destino": "Mexico",
         "milhas": 7700,
         "preco": 2800.00,
         "aeronave": "Boeing 787",

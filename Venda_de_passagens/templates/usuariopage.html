@@ -52,15 +52,14 @@
 </head>
 <body>
     
-    <div class="content-container">
-        <div class="welcome-box">
-            Seja bem-vindo {{nome_usuario}}!
-        </div>
+  <div class="content-container">
+    <div class="welcome-box">Seja bem-vindo {{nome_usuario}}!</div>
 
-        <a href="{{ url_for('listar_voos') }}" class="btn btn-primary btn-lg">
-            Ver Voos Disponíveis
-        </a>
-    </div>
+    <a href="{{ url_for('listar_voos_para_usuario', nome_usuario=nome_usuario) }}" class="btn btn-primary btn-lg">
+      Ver Voos Disponíveis
+    </a>
+    
+  </div>
 
 </body>
 </html>
