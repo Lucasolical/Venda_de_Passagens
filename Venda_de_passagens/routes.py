@@ -33,3 +33,7 @@ def listar_voos_para_usuario(nome_usuario):
     return render_template("listar_voos.html", 
                            lista_de_voos=voos,
                            nome_usuario=nome_usuario)
+
+@app.route("/cadastro")
+def cadastro():
+    return render_template("cadastro.html")
