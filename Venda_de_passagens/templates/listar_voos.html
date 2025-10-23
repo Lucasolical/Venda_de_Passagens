@@ -12,6 +12,16 @@
 <body style="background-color: #f8f9fa;">
 
     <div class="container mt-5">
+
+        {% if nome_usuario %}
+            <a href="{{ url_for('usuarios', nome_usuario=nome_usuario) }}" class="btn btn-primary mb-4">
+                Voltar
+            </a>
+        {% else %}
+            <a href="{{ url_for('homepage') }}" class="btn btn-secondary mb-4">
+                Voltar ao Início
+            </a>
+        {% endif %}
         <h1 class="mb-4">Voos Disponíveis</h1>
 
         <table class="table table-striped table-hover">
@@ -26,7 +36,7 @@
                     <th scope="col">Assentos</th>
                 </tr>
             </thead>
-
+            
             <tbody>
                 {% for codigo, voo in lista_de_voos.items() %}
                 <tr>
@@ -41,16 +51,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        
-        {% if nome_usuario %}
-            <a href="{{ url_for('usuarios', nome_usuario=nome_usuario) }}" class="btn btn-primary mt-3">
-                Voltar para a Página do Usuário
-            </a>
-        {% else %}
-            <a href="{{ url_for('homepage') }}" class="btn btn-secondary mt-3">
-                Voltar ao Início
-            </a>
-        {% endif %}
         
     </div>
 
