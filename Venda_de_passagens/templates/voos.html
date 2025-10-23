@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voos Disponíveis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/bootstrap.min.css') }}">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Voos Disponíveis para Viagem</h1>
+
+        {% if voos %}
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Origem</th>
+                    <th scope="col">Destino</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Partida</th>
+                    <th scope="col">Chegada</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for voo in voos %}
+                <tr>
+                    <td>{{ voo.origem }}</td>
+                    <td>{{ voo.destino }}</td>
+                    <td>{{ voo.Data }}</td>
+                    <td>{{ voo.horarioPartida }}</td>
+                    <td>{{ voo.horarioChegada }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Nenhum voo disponível no momento.
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
