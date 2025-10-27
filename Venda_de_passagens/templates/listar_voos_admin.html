@@ -15,7 +15,7 @@
 
         {% if nome_usuario %}
             <a href="{{ url_for('usuarios', nome_usuario=nome_usuario) }}" class="btn btn-primary mb-4">
-                Voltar
+                Voltar 
             </a>
         {% else %}
             <a href="{{ url_for('homepage') }}" class="btn btn-secondary mb-4">
@@ -51,8 +51,20 @@
                 {% endfor %}
             </tbody>
         </table>
-        
-    </div>
+
+        <a href="/" class="btn btn-secondary mb-4">
+            Cadastrar
+        </a>
+
+        <a href="/" class="btn btn-secondary mb-4">
+            Editar
+        </a>
+
+        <a href="/" class="btn btn-secondary mb-4">
+            Excluir
+        </a>
+
+    </div>  
 
 </body>
 </html>
