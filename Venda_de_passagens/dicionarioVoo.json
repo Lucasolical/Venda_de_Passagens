@@ -23,12 +23,40 @@
             "preco": 2800.0,
             "aeronave": "Boeing 787",
             "assentos": 280
+        },
+        "ED104": {
+            "origem": "Canada",
+            "destino": "bahamas",
+            "milhas": 123131231,
+            "preco": 11123.0,
+            "aeronave": "jatinho branco",
+            "assentos": 34
+        },
+        "ED105": {
+            "origem": "Mexico",
+            "destino": "Jerrusalam",
+            "milhas": 131231,
+            "preco": 12315451.0,
+            "aeronave": "tecoteco",
+            "assentos": 4
         }
     },
     "logins": [
-        {"nome": "Lucas", "senha": "matoseco"},
-        {"nome": "Luis", "senha": "jackSparrow4Ever"},
-        {"nome": "Reinas", "senha": "PeterPanLife"},
-        {"nome": "Enzo", "senha": "PennyWise"}
+        {
+            "nome": "Lucas",
+            "senha": "matoseco"
+        },
+        {
+            "nome": "Luis",
+            "senha": "jackSparrow4Ever"
+        },
+        {
+            "nome": "Reinas",
+            "senha": "PeterPanLife"
+        },
+        {
+            "nome": "Enzo",
+            "senha": "PennyWise"
+        }
     ]
 }

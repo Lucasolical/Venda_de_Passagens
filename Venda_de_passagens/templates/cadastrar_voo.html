@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Novo Voo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+</head>
+<body style="background-color: #f8f9fa;">
+
+    <div class="container mt-5">
+
+        {% if nome_usuario %}
+            <a href="{{ url_for('voos', nome_usuario=nome_usuario) }}" class="btn btn-primary mb-4">
+                Voltar
+            </a>
+        {% else %}
+            <a href="{{ url_for('homepage') }}" class="btn btn-secondary mb-4">
+                Voltar ao Início
+            </a>
+        {% endif %}
+
+        <h1 class="mb-4">Cadastrar Novo Voo</h1>
+
+        <form action="{{ url_for('cadastrar_voo') }}" method="POST" class="border p-4 rounded bg-white shadow-sm">
+
+            <div class="mb-3">
+                <label for="codigo" class="form-label">Código do Voo</label>
+                <input type="text" class="form-control" id="codigo" name="codigo" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="origem" class="form-label">Origem</label>
+                <input type="text" class="form-control" id="origem" name="origem" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="destino" class="form-label">Destino</label>
+                <input type="text" class="form-control" id="destino" name="destino" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="milhas" class="form-label">Milhas</label>
+                <input type="number" class="form-control" id="milhas" name="milhas" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preço (R$)</label>
+                <input type="number" step="0.01" class="form-control" id="preco" name="preco" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="aeronave" class="form-label">Aeronave</label>
+                <input type="text" class="form-control" id="aeronave" name="aeronave" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="assentos" class="form-label">Assentos Disponíveis</label>
+                <input type="number" class="form-control" id="assentos" name="assentos" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Cadastrar Voo</button>
+        </form>
+
+    </div>
+
+</body>
+</html>

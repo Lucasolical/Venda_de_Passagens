@@ -5,14 +5,16 @@ import json
 
 base_dir = os.path.dirname(__file__)
 json_path = os.path.join(base_dir, 'dicionarioVoo.json')
+# Carregamento dos dados do arquivo JSON
 
-with open(json_path, "r", encoding="utf-8") as f:
-    dados = json.load(f)
-    voos = dados["voos"]
-    logins = dados["logins"]
+def carregar_dados():
+    with open(json_path, "r", encoding="utf-8") as f:
+        return json.load(f)
     
 @app.route("/")
 def homepage():
+    dados = carregar_dados()
+    voos = dados["voos"]
     return render_template("index.html", 
                            lista_de_voos=voos.items(), 
                            search_terms={})
@@ -23,6 +25,8 @@ def admin_login_page():
 
 @app.route("/login", methods=["POST"])
 def login():
+    dados = carregar_dados()
+    logins = dados["logins"]
     usuario = request.form["usuario"]
     senha = request.form["senha"]
     for user in logins:
@@ -32,6 +36,8 @@ def login():
 
 @app.route("/buscar_voos")
 def buscar_voos():
+    dados = carregar_dados()
+    voos = dados["voos"]
 
     origem_filtro = request.args.get('origem', '').lower()
     destino_filtro = request.args.get('destino', '').lower()
@@ -59,10 +65,14 @@ def usuarios(nome_usuario):
 
 @app.route("/voos")
 def listar_voos():
+    dados = carregar_dados()
+    voos = dados["voos"]
     return render_template("listar_voos.html", lista_de_voos=voos)
 
 @app.route("/usuario/<nome_usuario>/voos")
 def listar_voos_para_admin(nome_usuario):
+    dados = carregar_dados()
+    voos = dados["voos"]
     return render_template("listar_voos_admin.html", 
                            lista_de_voos=voos, 
                            nome_usuario=nome_usuario)
@@ -70,3 +80,38 @@ def listar_voos_para_admin(nome_usuario):
 @app.route("/cadastro")
 def cadastro():
     return render_template("cadastro.html")
+############# novidades abaixo #############
+
+@app.route("/cadastrar_voo", methods=["GET", "POST"])
+def cadastrar_voo():
+    if request.method == "POST":
+        # Lê os dados do formulário
+        novo_voo = {
+            "origem": request.form["origem"],
+            "destino": request.form["destino"],
+            "milhas": int(request.form["milhas"]),
+            "preco": float(request.form["preco"]),
+            "aeronave": request.form["aeronave"],
+            "assentos": int(request.form["assentos"])
+        }
+
+        codigo = request.form["codigo"]
+
+        # Carrega o JSON existente
+        with open(json_path, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+
+        # Adiciona o novo voo na estrutura correta
+        if "voos" not in dados:
+            dados["voos"] = {}
+        dados["voos"][codigo] = novo_voo
+
+        # Salva o JSON atualizado
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+
+        # Redireciona para a página de voos do admin
+        return redirect(url_for("listar_voos_para_admin", nome_usuario="admin"))
+
+    # Método GET — exibe o formulário
+    return render_template("cadastrar_voo.html")
