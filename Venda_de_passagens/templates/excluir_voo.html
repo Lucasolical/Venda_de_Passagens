@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Voo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Excluir Voo {{ codigo }}</h2>
+
+    <p><strong>Origem:</strong> {{ voo["origem"] }}</p>
+    <p><strong>Destino:</strong> {{ voo["destino"] }}</p>
+    <p><strong>Aeronave:</strong> {{ voo["aeronave"] }}</p>
+
+    <form method="POST">
+        <p>Tem certeza que deseja excluir este voo?</p>
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href="{{ url_for('listar_voos_para_admin', nome_usuario='admin') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</body>
+</html>

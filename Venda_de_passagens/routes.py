@@ -115,3 +115,28 @@ def cadastrar_voo():
 
     # Método GET — exibe o formulário
     return render_template("cadastrar_voo.html")
+
+##############################################
+# 🗑️ Página e lógica para excluir voos
+@app.route("/excluir_voo/<codigo>", methods=["GET", "POST"])
+def excluir_voo(codigo):
+    dados = carregar_dados()
+    voos = dados["voos"]
+
+    # Se o código não existe, retorna erro simples
+    if codigo not in voos:
+        return render_template("erro.html", mensagem=f"O voo {codigo} não existe.")
+
+    if request.method == "POST":
+        # Remove o voo selecionado
+        del dados["voos"][codigo]
+
+        # Salva o JSON atualizado
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+
+        # Redireciona de volta para a lista do admin
+        return redirect(url_for("listar_voos_para_admin", nome_usuario="admin"))
+
+    # Exibe a página de confirmação antes de excluir
+    return render_template("excluir_voo.html", codigo=codigo, voo=voos[codigo])

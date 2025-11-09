@@ -47,7 +47,15 @@
                     <td>{{ "%.2f"|format(voo.preco) }}</td>
                     <td>{{ voo.aeronave }}</td>
                     <td>{{ voo.assentos }}</td>
+                    <td>
+                        <a href="{{ url_for('excluir_voo', codigo=codigo) }}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Tem certeza que deseja excluir o voo {{ codigo }}?');">
+                           Excluir
+                        </a>
+                    </td>
                 </tr>
+
                 {% endfor %}
             </tbody>
         </table>
@@ -59,10 +67,6 @@
 
         <a href="/" class="btn btn-secondary mb-4">
             Editar
-        </a>
-
-        <a href="/" class="btn btn-secondary mb-4">
-            Excluir
         </a>
 
     </div>  
