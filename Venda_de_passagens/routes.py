@@ -1,7 +1,16 @@
 from main import app
 from flask import render_template, request, redirect, url_for
-from dicionarioVoo import voos, logins
+import os
+import json
 
+base_dir = os.path.dirname(__file__)
+json_path = os.path.join(base_dir, 'dicionarioVoo.json')
+
+with open(json_path, "r", encoding="utf-8") as f:
+    dados = json.load(f)
+    voos = dados["voos"]
+    logins = dados["logins"]
+    
 @app.route("/")
 def homepage():
     return render_template("index.html", 
