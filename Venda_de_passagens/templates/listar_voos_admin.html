@@ -24,7 +24,7 @@
         {% endif %}
         <h1 class="mb-4">Voos Disponíveis</h1>
 
-        <table class="table table-striped table-hover">
+<table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
                     <th scope="col">Código</th>
@@ -34,7 +34,7 @@
                     <th scope="col">Preço (R$)</th>
                     <th scope="col">Aeronave</th>
                     <th scope="col">Assentos</th>
-                </tr>
+                    <th scope="col">Ações</th> </tr>
             </thead>
             
             <tbody>
@@ -47,15 +47,19 @@
                     <td>{{ "%.2f"|format(voo.preco) }}</td>
                     <td>{{ voo.aeronave }}</td>
                     <td>{{ voo.assentos }}</td>
+                    
                     <td>
+                        <a href="{{ url_for('editar_voo', codigo=codigo) }}" 
+                           class="btn btn-warning btn-sm">
+                           Editar
+                        </a>
+
                         <a href="{{ url_for('excluir_voo', codigo=codigo) }}" 
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Tem certeza que deseja excluir o voo {{ codigo }}?');">
+                           class="btn btn-danger btn-sm">
                            Excluir
                         </a>
                     </td>
                 </tr>
-
                 {% endfor %}
             </tbody>
         </table>
@@ -64,12 +68,22 @@
             Cadastrar
         </a>
 
-
-        <a href="/" class="btn btn-secondary mb-4">
-            Editar
-        </a>
-
-    </div>  
-
+        </div>
 </body>
 </html>
+
+
+                <!-- <td>
+                    Caso queira deixar direto para o exlcuir descomentar sa porra e comentar em cima
+                    <form action="{{ url_for('excluir_voo', codigo=codigo) }}" 
+                          method="POST" 
+                          style="display:inline;">
+                        
+                        O botão de submit dispara o formulário
+                        <button type="submit" 
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Tem certeza que deseja excluir o voo {{ codigo }}?');">
+                            Excluir
+                        </button>
+                    </form>
+                </td> -->

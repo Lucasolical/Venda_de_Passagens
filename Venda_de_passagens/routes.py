@@ -5,7 +5,6 @@ import json
 
 base_dir = os.path.dirname(__file__)
 json_path = os.path.join(base_dir, 'dicionarioVoo.json')
-# Carregamento dos dados do arquivo JSON
 
 def carregar_dados():
     with open(json_path, "r", encoding="utf-8") as f:
@@ -32,7 +31,7 @@ def login():
     for user in logins:
         if usuario == user["nome"] and senha == user["senha"]:
             return redirect(url_for("usuarios", nome_usuario=user["nome"]))
-    return render_template("login_admin.html", erro="Usuário ou senha incorretos!")
+    return render_template("login.html", erro="Usuário ou senha incorretos!")
 
 @app.route("/buscar_voos")
 def buscar_voos():
@@ -42,6 +41,7 @@ def buscar_voos():
     origem_filtro = request.args.get('origem', '').lower()
     destino_filtro = request.args.get('destino', '').lower()
     
+    #FAZER 
     # (adicionar data_ida e data_volta aqui depois)
 
     voos_filtrados = {}
@@ -80,7 +80,6 @@ def listar_voos_para_admin(nome_usuario):
 @app.route("/cadastro")
 def cadastro():
     return render_template("cadastro.html")
-############# novidades abaixo #############
 
 @app.route("/cadastrar_voo", methods=["GET", "POST"])
 def cadastrar_voo():
@@ -97,46 +96,68 @@ def cadastrar_voo():
 
         codigo = request.form["codigo"]
 
-        # Carrega o JSON existente
         with open(json_path, "r", encoding="utf-8") as f:
             dados = json.load(f)
 
-        # Adiciona o novo voo na estrutura correta
         if "voos" not in dados:
             dados["voos"] = {}
         dados["voos"][codigo] = novo_voo
 
-        # Salva o JSON atualizado
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=4, ensure_ascii=False)
 
-        # Redireciona para a página de voos do admin
         return redirect(url_for("listar_voos_para_admin", nome_usuario="admin"))
 
-    # Método GET — exibe o formulário
     return render_template("cadastrar_voo.html")
 
-##############################################
-# 🗑️ Página e lógica para excluir voos
 @app.route("/excluir_voo/<codigo>", methods=["GET", "POST"])
 def excluir_voo(codigo):
     dados = carregar_dados()
     voos = dados["voos"]
 
-    # Se o código não existe, retorna erro simples
     if codigo not in voos:
         return render_template("erro.html", mensagem=f"O voo {codigo} não existe.")
 
     if request.method == "POST":
-        # Remove o voo selecionado
         del dados["voos"][codigo]
 
-        # Salva o JSON atualizado
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=4, ensure_ascii=False)
 
-        # Redireciona de volta para a lista do admin
         return redirect(url_for("listar_voos_para_admin", nome_usuario="admin"))
 
-    # Exibe a página de confirmação antes de excluir
     return render_template("excluir_voo.html", codigo=codigo, voo=voos[codigo])
+
+@app.route("/editar_voo/<codigo>", methods=["GET", "POST"])
+def editar_voo(codigo):
+    dados = carregar_dados()
+    voos = dados["voos"]
+
+    if codigo not in voos:
+        return render_template("erro.html", mensagem=f"O voo {codigo} não existe.")
+
+    if request.method == "POST":
+
+        voo_atualizado = {
+            "origem": request.form["origem"],
+            "destino": request.form["destino"],
+            "milhas": int(request.form["milhas"]),
+            "preco": float(request.form["preco"]),
+            "aeronave": request.form["aeronave"],
+            "assentos": int(request.form["assentos"])
+        }
+  
+        dados["voos"][codigo] = voo_atualizado
+        
+
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+            
+
+        return redirect(url_for("listar_voos_para_admin", nome_usuario="admin"))
+
+    voo_para_editar = voos[codigo]
+  
+    return render_template("edicao.html", 
+                           codigo=codigo, 
+                           voo=voo_para_editar)
