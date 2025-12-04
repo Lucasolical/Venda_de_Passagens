@@ -21,7 +21,7 @@
             "destino": "bahamas",
             "milhas": 123131231,
             "preco": 11123.0,
-            "aeronave": "jatinho branco",
+            "aeronave": "jatinho",
             "assentos": 34
         },
         "ED105": {
@@ -45,18 +45,58 @@
         {
             "nome": "Lucas",
             "senha": "matoseco"
+        }
+    ],
+    "loginsusuarios": [
+        {
+            "nome": "Rodrigo",
+            "senha": "luis",
+            "cpf": "1234"
+        },
+        {
+            "nome": "Luis ",
+            "senha": "assad",
+            "cpf": "623623"
+        },
+        {
+            "nome": "Luis ",
+            "senha": "assad",
+            "cpf": "623623"
+        },
+        {
+            "nome": "DAS",
+            "senha": "DLASKDASL",
+            "cpf": "87542"
         },
         {
             "nome": "Luis",
-            "senha": "jackSparrow4Ever"
+            "senha": "d3asdsa",
+            "cpf": "463"
         },
         {
-            "nome": "Reinas",
-            "senha": "PeterPanLife"
+            "nome": "mato",
+            "senha": "123",
+            "cpf": "123"
         },
         {
-            "nome": "Enzo",
-            "senha": "PennyWise"
+            "nome": "Mateus",
+            "senha": "matoseco",
+            "cpf": "123456"
+        },
+        {
+            "nome": "e",
+            "senha": "1",
+            "cpf": "1"
+        },
+        {
+            "nome": "Luquinhas",
+            "senha": "12345",
+            "cpf": "12345"
+        },
+        {
+            "nome": "Rana",
+            "senha": "123",
+            "cpf": "123"
         }
     ]
 }

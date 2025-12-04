@@ -1,3 +1,75 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Cadastro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+
+      background-image: url("{{ url_for('static', filename='home.jpg') }}");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .card-cadastro {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 10px;
+      width: 400px;
+      margin-right: 80px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-cadastro">
+    <h3 class="text-center mb-4">Novo Cadastro</h3>
+    
+    <form action="/realizar_cadastro" method="POST">
+      
+      <div class="mb-3">
+        <label class="form-label">Nome Completo</label>
+        <input type="text" name="nome" class="form-control" required placeholder="Ex: João da Silva">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">CPF (Apenas números)</label>
+        <input type="number" name="cpf" class="form-control" required placeholder="Ex: 12345678900">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Senha</label>
+        <input type="password" name="senha" class="form-control" required placeholder="Crie uma senha segura">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Confirmar Senha</label>
+        <input type="password" name="confirmar_senha" class="form-control" required placeholder="Repita a senha">
+      </div>
+
+      <input type="hidden" name="reserva" value="">
+      <input type="hidden" name="data" value="">
+      <input type="hidden" name="milhas" value="0">
+
+      <button type="submit" class="btn btn-success w-100 btn-lg mb-3">Concluir Cadastro</button>
+      
+      <div class="text-center">
+        <a href="{{ url_for('admin_login_page') }}" class="text-decoration-none">Já tem conta? Fazer Login</a>
+      </div>
+
+    </form>
+  </div>
+
+</body>
+</html> -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
