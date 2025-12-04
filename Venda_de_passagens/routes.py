@@ -354,13 +354,6 @@ def gerenciar_clientes():
                 if not resultados:
                     mensagem = "Nenhum cliente com esse nome."
 
-        elif tipo_busca == "reserva":
-            # Busca por Reserva não é indexada com Árvore B (usa filtro Pandas).
-            filtro = DF_Clientes[DF_Clientes['reserva'].str.contains(valor_busca, case=False, na=False)]
-            resultados = filtro.to_dict('records')
-            if not resultados:
-                mensagem = "Nenhuma reserva encontrada com esse código."
-
     # Lógica de Listagem (Executada no carregamento inicial ou após falha na busca)
     if not resultados:
         if Ap_Raiz_CPF is not None and request.method == "GET":
