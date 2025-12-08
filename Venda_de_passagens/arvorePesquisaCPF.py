@@ -20,29 +20,24 @@ class Pagina:
     # 'Pagina' é o nó da Árvore B. É o bloco de dados que a Árvore tenta manter na memória
     # o máximo possível para acelerar as buscas.
     
-    self.n = 0 # Contador que indica quantas chaves (Registros) estão atualmente armazenadas nesta Página.
-               # O valor máximo de n é (ordem - 1).
-               
-    self.r = [None for i in range(ordem)] # Lista de Registros (Chave + Elemento). Armazena as chaves de busca.
-                                          # O tamanho é 'ordem', mas só são usados os índices de 0 a (ordem - 2).
-                                          
-    self.p = [None for i in range(ordem+1)] # Lista de Ponteiros para as Páginas Filhas.
-                                            # Um nó com N chaves tem N+1 ponteiros.
-                                            # O tamanho máximo é 'ordem + 1'.
+    #numero de chaves atualmente na página
+    self.n = 0# O valor máximo de n é (ordem - 1).
 
-# --------------------------------------------------------------------------------------------------
-# --- OPERAÇÕES DA ÁRVORE B ---
-# --------------------------------------------------------------------------------------------------
+    # Listas[chave, elemento]        
+    self.r = [None for i in range(ordem)]# O tamanho é 'ordem', mas só são usados os índices de 0 a (ordem - 2).
 
-# --- PESQUISA (Busca Binária e Recursiva) ---
+    #ponteiro para filhos                                      
+    self.p = [None for i in range(ordem+1)]
+
+# pesquisa passa o registro x e a raiz da arvore Ap
 def Pesquisa(x, Ap):
-  # Busca um Registro (x) dentro da subárvore cuja raiz é Ap.
+  # Busca um Registro (x) dentro da subárvore com raiz Ap.
   i = 1
+  #arvore nula
   if (Ap == None):
-    # Se a página for nula (chegou a um ponteiro folha vazio), o elemento não existe.
     return None
     
-  # 1. Busca binária dentro da Página Ap: encontra a primeira chave maior ou igual a x.Chave.
+  # 1. Busca possivel posição da chave na Página (procura o primeiro valor maior que x.chave)
   while (i < Ap.n and x.Chave > Ap.r[i - 1].Chave):
     i += 1
     
@@ -53,19 +48,16 @@ def Pesquisa(x, Ap):
     
   # 3. Desce para o próximo nível (Busca Recursiva)
   if (x.Chave < Ap.r[i - 1].Chave):
-    # Se a chave procurada é menor, desce para o ponteiro filho à esquerda (Ap.p[i - 1]).
+    # Se a chave procurada é menor, desce para o ponteiro filho à esquerda
     return Pesquisa(x, Ap.p[i - 1])
   else:
-    # Se a chave procurada é maior que todas as chaves testadas, desce pelo último ponteiro (Ap.p[i]).
+    # Se a chave procurada é maior que todas as chaves testadas, desce pelo último ponteiro
     return Pesquisa(x, Ap.p[i])
 
-# --------------------------------------------------------------------------------------------------
-# --- INSERÇÃO ---
-
+#Colocar novo registro de forma ordenada na pagina passando raiz. Obs: A pagina deve ter espaço.
 def _InsereNaPagina(Ap, Reg, ApDir):
-  # Função auxiliar para inserir um novo Registro (Reg) e seu ponteiro filho (ApDir)
-  # de forma ordenada DENTRO de uma Página que ainda tem espaço.
-  k = Ap.n # Começa do final do vetor de chaves (posição atual n)
+  # Começa do final do vetor de chaves (posição atual n)
+  k = Ap.n 
   NaoAchouPosicao = (k > 0)
   
   # Desloca as chaves existentes para a direita até encontrar a posição correta de inserção
@@ -74,64 +66,68 @@ def _InsereNaPagina(Ap, Reg, ApDir):
       # Posição encontrada: a nova chave é maior ou igual à chave anterior.
       NaoAchouPosicao = False
       break
+
     # Deslocamento
     Ap.r[k] = Ap.r[k - 1]
     Ap.p[k + 1] = Ap.p[k]
     k-= 1
-    if (k < 1): # Chegou na primeira posição
+
+    # Chegou na primeira posição
+    if (k < 1): 
       NaoAchouPosicao = False
       
   # Insere o novo Registro e o novo ponteiro na posição encontrada
   Ap.r[k] = Reg
   Ap.p[k + 1] = ApDir
-  Ap.n += 1 # Incrementa o número de chaves na Página
+  # Incrementa o número de chaves na Página
+  Ap.n += 1 
 
 def _Ins( Reg, Ap, Cresceu, RegRetorno, ApRetorno, Ordem ):
   # Função principal de inserção, que trata a recursão e a divisão de páginas (split).
   i = 1
   if (Ap == None):
-    # Caso Base: Chegou a um ponteiro nulo (folha). A inserção deve ocorrer aqui.
-    # Sinaliza que a árvore "cresceu" (o elemento será inserido e voltará na recursão).
+    # Chegou ao final. A inserção deve ser aqui
+    #  aqui.
+    # significa que a árvore "cresceu" (o elemento será inserido e voltará na recursão).
     return True, Reg, None 
     
-  # 1. Encontra o local para descer na recursão
+  #Encontra o local para descer na recursão (conta quantos nós são menores que a chave a ser inserida)
   while ( i < Ap.n and Reg.Chave > Ap.r[i - 1].Chave ):
     i+= 1
     
-  # 2. Tratamento de Chave Duplicada (Regra da Árvore B: não aceita chaves iguais)
+  # Chave Duplicada (Regra da Árvore B: não aceita chaves iguais)
   if(Reg.Chave == Ap.r[i - 1].Chave):
-    # Retorna False, indicando que não houve inserção e a árvore não cresceu.
     return False, RegRetorno, ApRetorno
-    
+  # ajusta o indice para descer corretamente em casos de chaves menores
   if(Reg.Chave < Ap.r[i - 1].Chave ):
     i-= 1
     
-  # 3. Chamada Recursiva: Desce para o nó filho
+  #Chamada Recursiva: Desce para o nó filho
   Cresceu, RegRetorno, ApRetorno = _Ins(Reg, Ap.p[i], Cresceu, RegRetorno, ApRetorno, Ordem)
   
   if(not Cresceu):
     # Se o filho não cresceu (ou seja, a inserção parou nos níveis inferiores), a função retorna.
     return False, RegRetorno, ApRetorno
     
-  # 4. Caso de Inserção Simples (Sem Overflow)
+  #Caso de Inserção Simples (Sem Overflow)
   if (Ap.n < Ordem): 
     # A página atual tem espaço: insere o Registro que veio do nível inferior.
     _InsereNaPagina(Ap, RegRetorno, ApRetorno)
     return False, RegRetorno, ApRetorno
     
-  # 5. Caso de Overflow (Divisão da Página - SPLIT)
-  # A página está cheia (n == Ordem). É necessário dividir.
-  ApTemp = Pagina(Ordem) # Cria uma nova Página temporária.
+  #Caso de Página cheia, precisa dividir
+  # Cria uma nova Página temporária.
+  ApTemp = Pagina(Ordem) 
   ApTemp.n = 0
   ApTemp.p[0] = None
   
   # Move a chave mediana e as chaves maiores para a nova página (ApTemp).
   # A chave que deve subir é determinada (RegRetorno).
   if (i < (Ordem//2) + 1):
-    # O novo Registro será inserido na página original (Ap).
-    # Move a última chave de Ap para ApTemp.
+    # Move a última chave de Ap para ApTemp para liberar espaço.
     _InsereNaPagina(ApTemp, Ap.r[Ordem - 1], Ap.p[Ordem])
     Ap.n-= 1
+    #insere em ap
     _InsereNaPagina(Ap, RegRetorno, ApRetorno)
   else:
     # O novo Registro será inserido na nova página (ApTemp).
@@ -141,7 +137,7 @@ def _Ins( Reg, Ap, Cresceu, RegRetorno, ApRetorno, Ordem ):
   for J in range((Ordem//2) + 2, Ordem + 1):
     _InsereNaPagina(ApTemp, Ap.r[J - 1], Ap.p[J])
     
-  # Atualiza o estado da página original (Ap) após o split.
+  # Atualiza o n de ap
   Ap.n = (Ordem//2)
   # Define o primeiro ponteiro da nova página.
   ApTemp.p[0] = Ap.p[(Ordem//2) + 1]
@@ -150,8 +146,11 @@ def _Ins( Reg, Ap, Cresceu, RegRetorno, ApRetorno, Ordem ):
   RegRetorno = Ap.r[(Ordem//2)]
   # Retorna a nova página criada (ApRetorno).
   ApRetorno = ApTemp
-  
-  return True, RegRetorno, ApRetorno # Sinaliza que houve crescimento (a chave mediana subiu).
+  # Sinaliza que houve crescimento (a chave mediana subiu).
+  return True, RegRetorno, ApRetorno 
+
+# Função pública que inicia o processo de inserção.Basicamente ela serve para tratar o caso de crescimento da raiz
+# no caso, se a árvore crescer, uma nova raiz é criada e a altura da árvore aumenta em 1.
 
 def Insere(Reg, Ap, Ordem):
   # Função pública que inicia o processo de inserção.
@@ -164,21 +163,22 @@ def Insere(Reg, Ap, Ordem):
   
   if (Cresceu):
     # Se a inserção causou um split na raiz, é necessário criar uma nova raiz, 
-    # aumentando a altura da árvore.
+    # aumentando a altura da árvore
     ApTemp = Pagina(Ordem)
     ApTemp.n = 1
-    ApTemp.r[0] = RegRetorno # O registro que subiu vira a chave da nova raiz.
-    ApTemp.p[1] = ApRetorno # A página nova vira o filho da direita.
-    ApTemp.p[0] = Ap        # A página antiga vira o filho da esquerda.
-    Ap = ApTemp             # Atualiza Ap para ser a nova raiz.
+    # O registro que subiu vira a chave da nova raiz
+    ApTemp.r[0] = RegRetorno 
+    # A página nova vira o filho da direita
+    ApTemp.p[1] = ApRetorno 
+    # A página antiga vira o filho da esquerda
+    ApTemp.p[0] = Ap  
+    # Atualiza Ap para ser a nova raiz
+    Ap = ApTemp             
   return Ap
 
-# --------------------------------------------------------------------------------------------------
-# --- FUNÇÕES AUXILIARES DE BUSCA NO PROJETO FLASK ---
 
 def BuscarCPF(Ap, chave_busca, df):
-    # Função para buscar um CPF específico na Árvore B e retornar os dados do cliente.
-    
+
     reg = Registro()
     reg.Chave = chave_busca # Define o CPF (chave de busca).
     
