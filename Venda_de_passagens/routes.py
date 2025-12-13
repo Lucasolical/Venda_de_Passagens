@@ -135,10 +135,36 @@ def login():
     for user in logins_passengers:
         if usuario == user["nome"] and senha == user["senha"]:
             # Cliente logado, redireciona para a página principal de voos.
-            return redirect(url_for("homepage")) 
+            return redirect(url_for("user_page")) 
 
     # Se a autenticação falhar
     return render_template("login.html", erro="Usuário ou senha incorretos!")
+
+@app.route("/userpage")
+def user_page():
+    """Rota da página inicial (Módulo do Passageiro)."""
+    dados = carregar_dados()    
+    voos = dados["voos"] # Pega os voos do dicionário (JSON).
+    # Renderiza o HTML principal, passando a lista de voos.
+    return render_template("userpage.html", lista_de_voos=voos.items(), search_terms={})
+
+
+@app.route("/comprar/<codigo>")
+def comprar_voo(codigo):
+    dados = carregar_dados()    
+    voo = dados["voos"][codigo] # Pega os voos do dicionário (JSON).
+    return render_template( "compra.html", codigo=codigo,voo=voo)
+
+
+@app.route("/finalizar_compra/<codigo>", methods=["POST"])
+def finalizar_compra(codigo):
+    nome = request.form["nome"]
+    cpf = request.form["cpf"]
+    pagamento = request.form["pagamento"]
+
+    # lógica de compra aqui
+
+    return f"Compra confirmada para {nome} no voo {codigo}"
 
 
 @app.route("/usuario/<nome_usuario>")
@@ -162,6 +188,23 @@ def listar_voos_para_admin(nome_usuario):
     voos = dados["voos"] # Pega o dicionário de voos.
     return render_template("listar_voos_admin.html", lista_de_voos=voos, nome_usuario=nome_usuario)
 
+
+@app.route("/buscar_vooscliente")
+def buscar_vooscliente():
+    """Filtra voos disponíveis na homepage (Módulo Passageiro)."""
+    dados = carregar_dados()
+    voos = dados["voos"]
+    origem_filtro = request.args.get('origem', '').lower()
+    destino_filtro = request.args.get('destino', '').lower()
+    voos_filtrados = {}
+    
+    # Percorre o dicionário de voos para aplicar os filtros.
+    for codigo, voo in voos.items():
+        if (origem_filtro in voo['origem'].lower()) and (destino_filtro in voo['destino'].lower()):
+            voos_filtrados[codigo] = voo
+            
+    # Retorna a lista filtrada.
+    return render_template("userpage.html", search_terms={'origem': request.args.get('origem', ''), 'destino': request.args.get('destino', '')}, lista_de_voos=voos_filtrados.items())
 
 @app.route("/buscar_voos")
 def buscar_voos():

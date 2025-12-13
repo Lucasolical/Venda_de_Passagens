@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprar Voo | Linhas Aéreas ED-II</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body style="background-color: #f4f4f4;">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/userpage">Linhas Aéreas ED-II</a>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO -->
+    <div class="container my-5">
+
+        <div class="card shadow-sm p-4">
+            <h3 class="mb-4">Confirmar Compra do Voo</h3>
+
+            <!-- DADOS DO VOO -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Código do Voo:</strong> {{ codigo }}</p>
+                    <p><strong>Origem:</strong> {{ voo.origem }}</p>
+                    <p><strong>Destino:</strong> {{ voo.destino }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Aeronave:</strong> {{ voo.aeronave }}</p>
+                    <p><strong>Preço:</strong> R$ {{ "%.2f"|format(voo.preco) }}</p>
+                    <p><strong>Milhas:</strong> {{ voo.milhas }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- FORMULÁRIO DE COMPRA -->
+            <form action="{{ url_for('finalizar_compra', codigo=codigo) }}" method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Nome do Passageiro</label>
+                    <input type="text" class="form-control" name="nome" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">CPF</label>
+                    <input type="text" class="form-control" name="cpf" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Forma de Pagamento</label>
+                    <select class="form-select" name="pagamento" required>
+                        <option value="">Selecione</option>
+                        <option value="dinheiro">Dinheiro (R$)</option>
+                        <option value="milhas">Milhas</option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/userpage" class="btn btn-secondary">
+                        Voltar
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        Confirmar Compra
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
