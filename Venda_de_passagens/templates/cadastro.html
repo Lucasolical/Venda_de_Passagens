@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -65,33 +65,14 @@
       </div>
 
     </form>
+    
+    {% if erro %}
+        <div class="alert alert-danger mt-3" role="alert">
+            {{ erro }}
+        </div>
+    {% endif %}
+
   </div>
 
-</body>
-</html> -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CADASTRO </title>
-    
-    <style>
-        body{
-            background-image: url("{{ url_for('static', filename='manutencao.jpg') }}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position-x: center;
-        }
-
-    </style>
-
-</head>
-<body>
-
-    
 </body>
 </html>

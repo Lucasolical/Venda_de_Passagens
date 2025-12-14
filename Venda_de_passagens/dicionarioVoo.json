@@ -92,6 +92,11 @@
             "nome": "Rana",
             "senha": "123",
             "cpf": "123"
+        },
+        {
+            "nome": "ines",
+            "senha": "oioi",
+            "cpf": "4123233"
         }
     ]
 }
