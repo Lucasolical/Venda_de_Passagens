@@ -6,6 +6,7 @@ from flask import render_template, request, redirect, url_for # Importa funçõe
 import os # Biblioteca para interagir com o sistema operacional (caminhos de arquivo).
 import json # Biblioteca para trabalhar com arquivos JSON (onde estão voos e logins).
 import pandas as pd # Biblioteca poderosa para manipulação de dados em tabela (DataFrame), usada para clientes.
+import datetime # NOVO: Necessário para registrar a data da compra/reserva.
 
 # Importa as implementações customizadas da Árvore B para otimizar diferentes buscas:
 import arvorePesquisaCPF as bt_cpf # Árvore B indexada por CPF (chave numérica).
@@ -103,7 +104,7 @@ def carregar_dados():
 
 @app.route("/")
 def homepage():
-    """Rota da página inicial (Módulo do Passageiro)."""
+    """Rota da página inicial (Módulo do Passageiro - Não Logado)."""
     dados = carregar_dados()    
     voos = dados["voos"] # Pega os voos do dicionário (JSON).
     # Renderiza o HTML principal, passando a lista de voos.
@@ -115,6 +116,12 @@ def homepage():
 def admin_login_page():
     """Rota para a página de login de Administradores/Clientes."""
     return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    """Simula o encerramento da sessão e redireciona para a página de login."""
+    return redirect(url_for("admin_login_page"))
 
 
 @app.route("/login", methods=["POST"])
@@ -142,7 +149,7 @@ def login():
 
 @app.route("/userpage")
 def user_page():
-    """Rota da página inicial (Módulo do Passageiro)."""
+    """Rota da página inicial (Módulo do Passageiro Logado)."""
     dados = carregar_dados()    
     voos = dados["voos"] # Pega os voos do dicionário (JSON).
     # Renderiza o HTML principal, passando a lista de voos.
@@ -152,19 +159,74 @@ def user_page():
 @app.route("/comprar/<codigo>")
 def comprar_voo(codigo):
     dados = carregar_dados()    
+    # Verifica se o voo existe antes de tentar acessá-lo
+    if codigo not in dados["voos"]:
+        return render_template("erro.html", mensagem=f"Voo {codigo} não encontrado.")
+        
     voo = dados["voos"][codigo] # Pega os voos do dicionário (JSON).
     return render_template( "compra.html", codigo=codigo,voo=voo)
 
 
 @app.route("/finalizar_compra/<codigo>", methods=["POST"])
 def finalizar_compra(codigo):
+    """
+    Lógica de compra completa: atualiza o cliente (CSV/DF) e o voo (JSON).
+    """
+    global DF_Clientes
+    
     nome = request.form["nome"]
     cpf = request.form["cpf"]
     pagamento = request.form["pagamento"]
+    
+    dados = carregar_dados()
+    voos = dados["voos"]
+    
+    # 1. VALIDAÇÃO E OBTENÇÃO DOS DADOS
+    if codigo not in voos:
+        return render_template("erro.html", mensagem=f"O voo {codigo} não foi encontrado.")
+    
+    voo = voos[codigo]
+    
+    if int(voo["assentos"]) <= 0:
+        return render_template("erro.html", mensagem=f"O voo {codigo} não tem assentos disponíveis.")
 
-    # lógica de compra aqui
-
-    return f"Compra confirmada para {nome} no voo {codigo}"
+    # 2. ATUALIZAÇÃO DO CLIENTE (DF_Clientes)
+    # Busca o cliente pelo CPF no DataFrame
+    if DF_Clientes is not None and cpf in DF_Clientes['cpf'].values:
+        
+        # Encontra o índice da linha do cliente com o CPF fornecido (Pandas Indexing)
+        indice_cliente = DF_Clientes[DF_Clientes['cpf'] == cpf].index[0]
+        
+        # Obtém a data de hoje para registro da reserva
+        data_reserva = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        # Atualiza os dados no DataFrame (reserva e data)
+        DF_Clientes.loc[indice_cliente, 'reserva'] = codigo
+        DF_Clientes.loc[indice_cliente, 'data'] = data_reserva
+        
+        # Lógica de milhas (apenas um placeholder)
+        if pagamento == "milhas":
+            # Aqui entraria a lógica de subtração de milhas
+            pass
+            
+        # Salva o DataFrame atualizado no CSV (Persistência)
+        DF_Clientes.to_csv(csv_path, index=False)
+        
+        # 3. ATUALIZAÇÃO DO VOO (JSON)
+        voo["assentos"] = int(voo["assentos"]) - 1 # Diminui 1 assento
+        
+        # Salva o JSON atualizado (Persistência)
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+            
+        # 4. RECONSTRUÇÃO DOS ÍNDICES
+        inicializar_arvores()
+        
+        mensagem_final = f"🎉 Compra confirmada para {nome} no voo {codigo} para {voo['destino']}! Assento reservado e dados do cliente atualizados."
+        return render_template("confirmacao.html", mensagem=mensagem_final)
+        
+    else:
+        return render_template("erro.html", mensagem=f"Cliente com CPF {cpf} não encontrado no sistema. Por favor, cadastre-se primeiro.")
 
 
 @app.route("/usuario/<nome_usuario>")
@@ -191,7 +253,7 @@ def listar_voos_para_admin(nome_usuario):
 
 @app.route("/buscar_vooscliente")
 def buscar_vooscliente():
-    """Filtra voos disponíveis na homepage (Módulo Passageiro)."""
+    """Filtra voos disponíveis na userpage (Módulo Passageiro)."""
     dados = carregar_dados()
     voos = dados["voos"]
     origem_filtro = request.args.get('origem', '').lower()
@@ -208,7 +270,7 @@ def buscar_vooscliente():
 
 @app.route("/buscar_voos")
 def buscar_voos():
-    """Filtra voos disponíveis na homepage (Módulo Passageiro)."""
+    """Filtra voos disponíveis na homepage (Módulo Passageiro - Não Logado)."""
     dados = carregar_dados()
     voos = dados["voos"]
     origem_filtro = request.args.get('origem', '').lower()
@@ -343,11 +405,6 @@ def listar_voos():
     dados = carregar_dados()
     voos = dados["voos"]
     return render_template("listar_voos.html", lista_de_voos=voos)
-
-@app.route("/logout")
-def logout():
-    """Simula o encerramento da sessão e redireciona para a página de login."""
-    return redirect(url_for("admin_login_page"))
 
 
 @app.route("/clientes", methods=["GET", "POST"])
