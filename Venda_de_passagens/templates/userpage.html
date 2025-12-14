@@ -20,6 +20,9 @@
                         <a class="nav-link active" href="/userpage">Voos</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('meus_voos', cpf=cpf) }}">Minhas Reservas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#">Milhas</a>
                     </li>
                 </ul>
@@ -91,9 +94,9 @@
                         <td>{{ voo.aeronave }}</td>
                         <td>{{ voo.assentos }}</td>
                         <td>
-                            <a href="{{ url_for('comprar_voo', codigo=codigo) }}"
-                               class="btn btn-success btn-sm">
-                                Comprar
+                            <a href="{{ url_for('comprar_voo', codigo=codigo) }}?cpf={{ cpf }}"
+                            class="btn btn-success btn-sm">
+                            Comprar
                             </a>
                         </td>
                     </tr>

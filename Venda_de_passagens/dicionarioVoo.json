@@ -3,26 +3,26 @@
         "ED102": {
             "origem": "Brasil",
             "destino": "Canadá",
-            "milhas": 1400023,
+            "milhas": 1000,
             "preco": 3500.0,
             "aeronave": "Boeing 777",
-            "assentos": 298
+            "assentos": 291
         },
         "ED103": {
             "origem": "Brasil ",
             "destino": "Mexico",
-            "milhas": 7700,
+            "milhas": 2000,
             "preco": 2800.0,
             "aeronave": "Boeing 787",
-            "assentos": 280
+            "assentos": 278
         },
         "ED104": {
             "origem": "Canada",
             "destino": "bahamas",
-            "milhas": 123131231,
-            "preco": 11123.0,
+            "milhas": 4000,
+            "preco": 5500.0,
             "aeronave": "jatinho",
-            "assentos": 34
+            "assentos": 31
         },
         "ED105": {
             "origem": "Bahiahrhd",
@@ -30,7 +30,7 @@
             "milhas": 512,
             "preco": 1050.0,
             "aeronave": "Boing2300",
-            "assentos": 100
+            "assentos": 98
         },
         "ea": {
             "origem": "aa",
@@ -38,7 +38,7 @@
             "milhas": 1,
             "preco": 1.0,
             "aeronave": "1",
-            "assentos": 12
+            "assentos": 10
         }
     },
     "logins": [

@@ -8,6 +8,8 @@ import json # Biblioteca para trabalhar com arquivos JSON (onde estão voos e lo
 import pandas as pd # Biblioteca poderosa para manipulação de dados em tabela (DataFrame), usada para clientes.
 import datetime # NOVO: Necessário para registrar a data da compra/reserva.
 
+
+
 # Importa as implementações customizadas da Árvore B para otimizar diferentes buscas:
 import arvorePesquisaCPF as bt_cpf # Árvore B indexada por CPF (chave numérica).
 import arvorePesquisaNome as bt_nome # Árvore B indexada por Nome (chave de string/alfabética).
@@ -104,74 +106,82 @@ def carregar_dados():
 
 @app.route("/")
 def homepage():
-    """Rota da página inicial (Módulo do Passageiro - Não Logado)."""
     dados = carregar_dados()    
-    voos = dados["voos"] # Pega os voos do dicionário (JSON).
-    # Renderiza o HTML principal, passando a lista de voos.
+    voos = dados["voos"]
     return render_template("index.html", lista_de_voos=voos.items(), search_terms={})
-
-
 
 @app.route("/admin_login")
 def admin_login_page():
-    """Rota para a página de login de Administradores/Clientes."""
     return render_template("login.html")
-
 
 @app.route("/logout")
 def logout():
-    """Simula o encerramento da sessão e redireciona para a página de login."""
     return redirect(url_for("admin_login_page"))
 
 
 @app.route("/login", methods=["POST"])
 def login():
-    """Lógica de Autenticação (Dicionários)."""
+    """Lógica de Autenticação (MODIFICADA para passar CPF)."""
     dados = carregar_dados()
-    logins_passengers = dados.get("loginsusuarios", []) # Logins de clientes.
+    logins_passengers = dados.get("loginsusuarios", [])
     
     usuario = request.form["usuario"]
     senha = request.form["senha"]
 
-    # 1. Verifica se é o Administrador único (Lucas/matoseco)
     if usuario == "Lucas" and senha == "matoseco":
-        # Redireciona para o painel de administração.
         return redirect(url_for("usuarios", nome_usuario=usuario))
 
-    # 2. Verifica se é um Cliente
     for user in logins_passengers:
         if usuario == user["nome"] and senha == user["senha"]:
-            # Cliente logado, redireciona para a página principal de voos.
-            return redirect(url_for("user_page")) 
+            # REDIRECIONA PASSANDO O CPF DO CLIENTE
+            return redirect(url_for("user_page", cpf=user["cpf"])) 
 
-    # Se a autenticação falhar
     return render_template("login.html", erro="Usuário ou senha incorretos!")
 
-@app.route("/userpage")
-def user_page():
+@app.route("/userpage/<cpf>") # MODIFICADA para receber o CPF
+def user_page(cpf):
     """Rota da página inicial (Módulo do Passageiro Logado)."""
     dados = carregar_dados()    
-    voos = dados["voos"] # Pega os voos do dicionário (JSON).
-    # Renderiza o HTML principal, passando a lista de voos.
-    return render_template("userpage.html", lista_de_voos=voos.items(), search_terms={})
-
+    voos = dados["voos"]
+    # Passa o CPF para o template
+    return render_template("userpage.html", lista_de_voos=voos.items(), search_terms={}, cpf=cpf)
 
 @app.route("/comprar/<codigo>")
 def comprar_voo(codigo):
+    """MODIFICADA: Carrega dados do cliente (Nome, Milhas) para simplificar o formulário."""
+    global DF_Clientes
     dados = carregar_dados()    
-    # Verifica se o voo existe antes de tentar acessá-lo
+    
+    cpf = request.args.get('cpf') # Pega o CPF do cliente da query string
+    
+    if not cpf:
+        return redirect(url_for('admin_login_page'))
+    
     if codigo not in dados["voos"]:
-        return render_template("erro.html", mensagem=f"Voo {codigo} não encontrado.")
+        return render_template("erro.html", mensagem=f"Voo {codigo} não encontrado.", cpf=cpf)
         
-    voo = dados["voos"][codigo] # Pega os voos do dicionário (JSON).
-    return render_template( "compra.html", codigo=codigo,voo=voo)
+    voo = dados["voos"][codigo]
+    
+    cliente_info = DF_Clientes[DF_Clientes['cpf'] == cpf]
+
+    if cliente_info.empty:
+        return redirect(url_for('logout'))
+
+    nome_cliente = cliente_info['nome'].iloc[0]
+    milhas_cliente = int(cliente_info['milhas'].iloc[0]) # Milhas atuais do cliente
+    
+    # Renderiza o template, passando as informações do cliente
+    return render_template( "compra.html", 
+                            codigo=codigo, 
+                            voo=voo, 
+                            nome_cliente=nome_cliente, 
+                            milhas_cliente=milhas_cliente,
+                            cpf=cpf)
 
 
 @app.route("/finalizar_compra/<codigo>", methods=["POST"])
 def finalizar_compra(codigo):
-    """
-    Lógica de compra completa: atualiza o cliente (CSV/DF) e o voo (JSON).
-    """
+    """Lógica de compra completa: registra a reserva no histórico, atualiza milhas e assentos."""
     global DF_Clientes
     
     nome = request.form["nome"]
@@ -181,53 +191,98 @@ def finalizar_compra(codigo):
     dados = carregar_dados()
     voos = dados["voos"]
     
-    # 1. VALIDAÇÃO E OBTENÇÃO DOS DADOS
+    # ... (Validações iniciais, inalteradas) ...
+    
     if codigo not in voos:
-        return render_template("erro.html", mensagem=f"O voo {codigo} não foi encontrado.")
+        return render_template("erro.html", mensagem=f"O voo {codigo} não foi encontrado.", cpf=cpf)
     
     voo = voos[codigo]
     
     if int(voo["assentos"]) <= 0:
-        return render_template("erro.html", mensagem=f"O voo {codigo} não tem assentos disponíveis.")
+        return render_template("erro.html", mensagem=f"O voo {codigo} não tem assentos disponíveis.", cpf=cpf)
 
     # 2. ATUALIZAÇÃO DO CLIENTE (DF_Clientes)
-    # Busca o cliente pelo CPF no DataFrame
     if DF_Clientes is not None and cpf in DF_Clientes['cpf'].values:
         
-        # Encontra o índice da linha do cliente com o CPF fornecido (Pandas Indexing)
+        # --- NOVO BLOCO DE CORREÇÃO DE ERRO ---
+        # Garante que a coluna 'historico_reservas' exista antes de ser acessada.
+        if 'historico_reservas' not in DF_Clientes.columns:
+            DF_Clientes['historico_reservas'] = None
+        # -------------------------------------
+        
         indice_cliente = DF_Clientes[DF_Clientes['cpf'] == cpf].index[0]
+        data_reserva = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # Obtém a data de hoje para registro da reserva
-        data_reserva = datetime.datetime.now().strftime("%Y-%m-%d")
+        milhas_cliente_atuais = int(DF_Clientes.loc[indice_cliente, 'milhas'])
+        milhas_custo_voo = int(voo['milhas'])
+        milhas_transacao = 0
+
+        # --- LÓGICA DE PAGAMENTO E MILHAS (Inalterada) ---
+        if pagamento == "milhas":
+            if milhas_cliente_atuais < milhas_custo_voo:
+                return render_template("erro.html", mensagem="Milhas insuficientes para esta compra.", cpf=cpf)
+            
+            milhas_restantes = milhas_cliente_atuais - milhas_custo_voo
+            milhas_transacao = -milhas_custo_voo
+            mensagem_pagamento = f"Pagamento realizado com sucesso via Milhas ({milhas_custo_voo} deduzidas)."
+
+        elif pagamento == "dinheiro":
+            milhas_a_ganhar = milhas_custo_voo 
+            milhas_restantes = milhas_cliente_atuais + milhas_a_ganhar
+            milhas_transacao = milhas_a_ganhar
+            mensagem_pagamento = f"Pagamento realizado via Dinheiro. Milhas ({milhas_a_ganhar}) adicionadas para futura utilização."
         
-        # Atualiza os dados no DataFrame (reserva e data)
+        # 3. ATUALIZAÇÃO DO SALDO DE MILHAS
+        DF_Clientes.loc[indice_cliente, 'milhas'] = str(milhas_restantes)
+
+        # 4. CRIAÇÃO DA RESERVA E ATUALIZAÇÃO DO HISTÓRICO 
+        nova_reserva = {
+            "codigo": codigo,
+            "data_compra": data_reserva,
+            "origem": voo["origem"],
+            "destino": voo["destino"],
+            "aeronave": voo["aeronave"],
+            "preco_pago": float(voo["preco"]),
+            "milhas_transacao": milhas_transacao
+        }
+
+        # Tenta acessar a coluna (agora que sabemos que ela existe)
+        historico_json = DF_Clientes.loc[indice_cliente, 'historico_reservas']
+        
+        if pd.isna(historico_json) or historico_json is None: # Trata tanto NaN quanto None
+            historico_reservas = []
+        else:
+            historico_reservas = json.loads(historico_json)
+
+        historico_reservas.append(nova_reserva)
+        
+        # Converte a lista atualizada de volta para JSON e salva no DataFrame
+        DF_Clientes.loc[indice_cliente, 'historico_reservas'] = json.dumps(historico_reservas, ensure_ascii=False)
+        
+        # Mantemos 'reserva' e 'data' por retrocompatibilidade (se necessário)
         DF_Clientes.loc[indice_cliente, 'reserva'] = codigo
         DF_Clientes.loc[indice_cliente, 'data'] = data_reserva
         
-        # Lógica de milhas (apenas um placeholder)
-        if pagamento == "milhas":
-            # Aqui entraria a lógica de subtração de milhas
-            pass
-            
-        # Salva o DataFrame atualizado no CSV (Persistência)
+        # Salva o DataFrame no CSV
         DF_Clientes.to_csv(csv_path, index=False)
         
-        # 3. ATUALIZAÇÃO DO VOO (JSON)
-        voo["assentos"] = int(voo["assentos"]) - 1 # Diminui 1 assento
+        # 5. ATUALIZAÇÃO DO VOO (JSON)
+        voo["assentos"] = int(voo["assentos"]) - 1 
         
-        # Salva o JSON atualizado (Persistência)
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(dados, f, indent=4, ensure_ascii=False)
             
-        # 4. RECONSTRUÇÃO DOS ÍNDICES
+        # 6. RECONSTRUÇÃO DOS ÍNDICES
         inicializar_arvores()
         
-        mensagem_final = f"🎉 Compra confirmada para {nome} no voo {codigo} para {voo['destino']}! Assento reservado e dados do cliente atualizados."
-        return render_template("confirmacao.html", mensagem=mensagem_final)
-        
+        mensagem_final = f" Compra confirmada para {nome} no voo {codigo} para {voo['destino']}! {mensagem_pagamento}"
+                
+                # GARANTIR que o CPF está sendo passado para o template:
+        return render_template("confirmacao.html", mensagem=mensagem_final, cpf=cpf)
+                
     else:
-        return render_template("erro.html", mensagem=f"Cliente com CPF {cpf} não encontrado no sistema. Por favor, cadastre-se primeiro.")
-
+                # GARANTIR que o CPF está sendo passado para o template de erro também:
+        return render_template("erro.html", mensagem=f"Cliente com CPF {cpf} não encontrado no sistema.", cpf=cpf)
 
 @app.route("/usuario/<nome_usuario>")
 def usuarios(nome_usuario):
@@ -496,3 +551,40 @@ def cadastrar_cliente():
     inicializar_arvores()
     
     return redirect(url_for("gerenciar_clientes"))
+
+@app.route("/meus_voos/<cpf>")
+def meus_voos(cpf):
+    """MODIFICADA: Busca e lista todas as reservas do cliente no DF_Clientes."""
+    global DF_Clientes 
+    
+    cliente_df = DF_Clientes[DF_Clientes['cpf'] == cpf]
+    if cliente_df.empty:
+        return redirect(url_for('logout'))
+
+    lista_de_reservas = []
+    
+    # Tenta acessar a coluna de histórico
+    if 'historico_reservas' in cliente_df.columns:
+        historico_json = cliente_df['historico_reservas'].iloc[0]
+        
+        if not pd.isna(historico_json):
+            # Carrega a lista de dicionários de reservas
+            reservas_do_cliente = json.loads(historico_json)
+            
+            # Ordena as reservas da mais recente para a mais antiga
+            reservas_do_cliente.sort(key=lambda r: r['data_compra'], reverse=True)
+            
+            # Itera sobre cada reserva (o dicionário completo já tem todas as informações)
+            for reserva in reservas_do_cliente:
+                 lista_de_reservas.append({
+                    "codigo": reserva["codigo"],
+                    "origem": reserva["origem"],
+                    "destino": reserva["destino"],
+                    "aeronave": reserva["aeronave"],
+                    "preco_pago": reserva["preco_pago"],
+                    "milhas_transacao": reserva["milhas_transacao"],
+                    "data_compra": reserva["data_compra"]
+                 })
+            
+    # Passa a lista completa de reservas para o template
+    return render_template("meus_voos.html", lista_de_reservas=lista_de_reservas, cpf=cpf)

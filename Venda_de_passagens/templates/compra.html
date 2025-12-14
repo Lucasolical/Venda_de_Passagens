@@ -11,20 +11,20 @@
 
 <body style="background-color: #f4f4f4;">
 
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/userpage">Linhas Aéreas ED-II</a>
+            <a class="navbar-brand" href="{{ url_for('user_page', cpf=cpf) }}">Linhas Aéreas ED-II</a>
         </div>
     </nav>
 
-    <!-- CONTEÚDO -->
     <div class="container my-5">
 
         <div class="card shadow-sm p-4">
             <h3 class="mb-4">Confirmar Compra do Voo</h3>
+            <p class="lead">Passageiro: <strong>{{ nome_cliente }}</strong> (CPF: {{ cpf }})</p>
+            <p class="lead text-success">Milhas Disponíveis: <strong>{{ milhas_cliente }}</strong></p>
+            <hr>
 
-            <!-- DADOS DO VOO -->
             <div class="row mb-4">
                 <div class="col-md-6">
                     <p><strong>Código do Voo:</strong> {{ codigo }}</p>
@@ -33,37 +33,34 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Aeronave:</strong> {{ voo.aeronave }}</p>
-                    <p><strong>Preço:</strong> R$ {{ "%.2f"|format(voo.preco) }}</p>
-                    <p><strong>Milhas:</strong> {{ voo.milhas }}</p>
+                    <p><strong>Preço:</strong> R$ {{ "%.2f"|format(voo.preco | float) }}</p>
+                    <p><strong>Custo em Milhas / Milhas a Ganhar:</strong> {{ voo.milhas }}</p>
                 </div>
             </div>
 
             <hr>
 
-            <!-- FORMULÁRIO DE COMPRA -->
             <form action="{{ url_for('finalizar_compra', codigo=codigo) }}" method="POST">
-
-                <div class="mb-3">
-                    <label class="form-label">Nome do Passageiro</label>
-                    <input type="text" class="form-control" name="nome" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">CPF</label>
-                    <input type="text" class="form-control" name="cpf" required>
-                </div>
 
                 <div class="mb-3">
                     <label class="form-label">Forma de Pagamento</label>
                     <select class="form-select" name="pagamento" required>
                         <option value="">Selecione</option>
-                        <option value="dinheiro">Dinheiro (R$)</option>
-                        <option value="milhas">Milhas</option>
+                        <option value="dinheiro">Dinheiro (R$ {{ "%.2f"|format(voo.preco | float) }})</option>
+                        
+                        {% if milhas_cliente >= voo.milhas | int %}
+                            <option value="milhas">Milhas ({{ voo.milhas }} milhas)</option>
+                        {% else %}
+                            <option value="" disabled>Milhas ({{ voo.milhas }} milhas) - Saldo Insuficiente</option>
+                        {% endif %}
                     </select>
                 </div>
-
+                
+                <input type="hidden" name="cpf" value="{{ cpf }}">
+                <input type="hidden" name="nome" value="{{ nome_cliente }}">
+                
                 <div class="d-flex justify-content-between mt-4">
-                    <a href="/userpage" class="btn btn-secondary">
+                    <a href="{{ url_for('user_page', cpf=cpf) }}" class="btn btn-secondary">
                         Voltar
                     </a>
                     <button type="submit" class="btn btn-success">

@@ -11,8 +11,8 @@
             <h1 class="text-success mb-4">Sucesso!</h1>
             <p class="lead">{{ mensagem }}</p>
             <hr>
-            <a href="/userpage" class="btn btn-primary mt-3">Voltar para Voos</a>
-            <a href="/logout" class="btn btn-outline-danger mt-3">Sair</a>
+            <a href="{{ url_for('user_page', cpf=cpf) }}" class="btn btn-primary mt-3">Voltar para Voos</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger mt-3">Sair</a>
         </div>
     </div>
 </body>
