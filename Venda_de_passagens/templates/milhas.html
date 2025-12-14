@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Milhas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('user_page', cpf=cpf) }}">Linhas Aéreas ED-II</a>
+            <div class="collapse navbar-collapse" id="navbarApp">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user_page', cpf=cpf) }}">Voos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('meus_voos', cpf=cpf) }}">Minhas Reservas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('ver_milhas', cpf=cpf) }}">Milhas</a>
+                    </li>
+                </ul>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Sair</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <div class="card p-5 shadow-sm text-center">
+            <h1 class="mb-4">Saldo de Milhas</h1>
+            <p class="lead">VOCÊ TEM</p>
+            <h2 class="display-3 text-success">{{ milhas_saldo }}</h2>
+            <p class="lead">MILHAS DISPONÍVEIS</p>
+            <hr>
+            <a href="{{ url_for('user_page', cpf=cpf) }}" class="btn btn-primary mt-3">Voltar para Voos</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

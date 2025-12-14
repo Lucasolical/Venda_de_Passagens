@@ -552,6 +552,8 @@ def cadastrar_cliente():
     
     return redirect(url_for("gerenciar_clientes"))
 
+#LJ
+
 @app.route("/meus_voos/<cpf>")
 def meus_voos(cpf):
     """MODIFICADA: Busca e lista todas as reservas do cliente no DF_Clientes."""
@@ -588,3 +590,22 @@ def meus_voos(cpf):
             
     # Passa a lista completa de reservas para o template
     return render_template("meus_voos.html", lista_de_reservas=lista_de_reservas, cpf=cpf)
+
+
+#LJ
+
+@app.route("/milhas/<cpf>")
+def ver_milhas(cpf):
+    """Busca o saldo de milhas do cliente no DataFrame."""
+    global DF_Clientes
+    
+    cliente_df = DF_Clientes[DF_Clientes['cpf'] == cpf]
+    
+    if cliente_df.empty:
+        return redirect(url_for('logout'))
+        
+    # Pega o saldo de milhas do cliente
+    milhas_saldo = int(cliente_df['milhas'].iloc[0])
+    
+    return render_template("milhas.html", milhas_saldo=milhas_saldo, cpf=cpf)
+

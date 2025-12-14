@@ -14,7 +14,7 @@
             "milhas": 2000,
             "preco": 2800.0,
             "aeronave": "Boeing 787",
-            "assentos": 278
+            "assentos": 277
         },
         "ED104": {
             "origem": "Canada",
@@ -22,7 +22,7 @@
             "milhas": 4000,
             "preco": 5500.0,
             "aeronave": "jatinho",
-            "assentos": 31
+            "assentos": 29
         },
         "ED105": {
             "origem": "Bahiahrhd",
