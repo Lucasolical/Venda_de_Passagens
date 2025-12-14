@@ -2,7 +2,7 @@
     "voos": {
         "ED102": {
             "origem": "Brasil",
-            "destino": "fdsIndiat",
+            "destino": "Canadá",
             "milhas": 1400023,
             "preco": 3500.0,
             "aeronave": "Boeing 777",
