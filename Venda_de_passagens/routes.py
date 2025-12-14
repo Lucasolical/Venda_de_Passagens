@@ -344,6 +344,11 @@ def listar_voos():
     voos = dados["voos"]
     return render_template("listar_voos.html", lista_de_voos=voos)
 
+@app.route("/logout")
+def logout():
+    """Simula o encerramento da sessão e redireciona para a página de login."""
+    return redirect(url_for("admin_login_page"))
+
 
 @app.route("/clientes", methods=["GET", "POST"])
 def gerenciar_clientes():
