@@ -696,7 +696,7 @@ def recomendacao_ia():
         # --- TENTATIVA 1: IA REAL (GROQ) ---
         try:
             # Substitua pela sua chave da Groq
-            client = Groq(api_key="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")
+            client = Groq(api_key="CHAVE")
 
             completion = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
