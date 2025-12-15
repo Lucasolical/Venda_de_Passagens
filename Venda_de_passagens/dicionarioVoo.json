@@ -1,44 +1,228 @@
 {
     "voos": {
         "ED102": {
-            "origem": "Brasil",
-            "destino": "Canadá",
+            "origem": "Brasilia",
+            "destino": "Canada",
             "milhas": 1000,
             "preco": 3500.0,
             "aeronave": "Boeing 777",
-            "assentos": 291
+            "assentos": 30
+        },
+        "ED102R": {
+            "origem": "Canada",
+            "destino": "Brasilia",
+            "milhas": 1000,
+            "preco": 3500.0,
+            "aeronave": "Boeing 777",
+            "assentos": 30
         },
         "ED103": {
-            "origem": "Brasil ",
+            "origem": "Brasilia",
             "destino": "Mexico",
             "milhas": 2000,
             "preco": 2800.0,
             "aeronave": "Boeing 787",
-            "assentos": 277
+            "assentos": 20
+        },
+        "ED103R": {
+            "origem": "Mexico",
+            "destino": "Brasilia",
+            "milhas": 2000,
+            "preco": 2800.0,
+            "aeronave": "Boeing 787",
+            "assentos": 20
         },
         "ED104": {
             "origem": "Canada",
-            "destino": "bahamas",
+            "destino": "Bahamas",
             "milhas": 4000,
             "preco": 5500.0,
             "aeronave": "jatinho",
-            "assentos": 29
+            "assentos": 25
+        },
+        "ED104R": {
+            "origem": "Bahamas",
+            "destino": "Canada",
+            "milhas": 4000,
+            "preco": 5500.0,
+            "aeronave": "jatinho",
+            "assentos": 25
         },
         "ED105": {
-            "origem": "Bahiahrhd",
-            "destino": "MinasGerais",
+            "origem": "Bahia",
+            "destino": "Minas Gerais",
             "milhas": 512,
             "preco": 1050.0,
             "aeronave": "Boing2300",
-            "assentos": 98
+            "assentos": 15
         },
-        "ea": {
-            "origem": "aa",
-            "destino": "a",
-            "milhas": 1,
-            "preco": 1.0,
-            "aeronave": "1",
-            "assentos": 10
+        "ED105R": {
+            "origem": "Minas Gerais",
+            "destino": "Bahia",
+            "milhas": 512,
+            "preco": 1050.0,
+            "aeronave": "Boing2300",
+            "assentos": 15
+        },
+        "ED106": {
+            "origem": "Bahia",
+            "destino": "Sao Paulo",
+            "milhas": 1500,
+            "preco": 2000.0,
+            "aeronave": "Gol",
+            "assentos": 30
+        },
+        "ED106R": {
+            "origem": "Sao Paulo",
+            "destino": "Bahia",
+            "milhas": 1500,
+            "preco": 2000.0,
+            "aeronave": "Gol",
+            "assentos": 30
+        },
+        "ED107": {
+            "origem": "Bahia",
+            "destino": "Rio Grande do Sul",
+            "milhas": 1300,
+            "preco": 2700.0,
+            "aeronave": "Azul",
+            "assentos": 20
+        },
+        "ED107R": {
+            "origem": "Rio Grande do Sul",
+            "destino": "Bahia",
+            "milhas": 1300,
+            "preco": 2700.0,
+            "aeronave": "Azul",
+            "assentos": 20
+        },
+        "ED108": {
+            "origem": "Bahia",
+            "destino": "Uruguai",
+            "milhas": 2300,
+            "preco": 5000.0,
+            "aeronave": "Azul 512",
+            "assentos": 20
+        },
+        "ED108R": {
+            "origem": "Uruguai",
+            "destino": "Bahia",
+            "milhas": 2300,
+            "preco": 5000.0,
+            "aeronave": "Azul 512",
+            "assentos": 20
+        },
+        "ED109": {
+            "origem": "Bahia",
+            "destino": "EUA",
+            "milhas": 1000,
+            "preco": 2000.0,
+            "aeronave": "Azul 510",
+            "assentos": 20
+        },
+        "ED109R": {
+            "origem": "EUA",
+            "destino": "Bahia",
+            "milhas": 1000,
+            "preco": 2000.0,
+            "aeronave": "Azul 510",
+            "assentos": 20
+        },
+        "ED201": {
+            "origem": "Bahamas",
+            "destino": "Bahia",
+            "milhas": 3000,
+            "preco": 1200.0,
+            "aeronave": "Boeing 737",
+            "assentos": 50
+        },
+        "ED201R": {
+            "origem": "Bahia",
+            "destino": "Bahamas",
+            "milhas": 3000,
+            "preco": 1200.0,
+            "aeronave": "Boeing 737",
+            "assentos": 50
+        },
+        "ED202": {
+            "origem": "Sao Paulo",
+            "destino": "Brasilia",
+            "milhas": 500,
+            "preco": 400.0,
+            "aeronave": "Airbus A320",
+            "assentos": 100
+        },
+        "ED202R": {
+            "origem": "Brasilia",
+            "destino": "Sao Paulo",
+            "milhas": 500,
+            "preco": 400.0,
+            "aeronave": "Airbus A320",
+            "assentos": 100
+        },
+        "ED203": {
+            "origem": "Mexico",
+            "destino": "EUA",
+            "milhas": 1000,
+            "preco": 800.0,
+            "aeronave": "Boeing 737",
+            "assentos": 40
+        },
+        "ED203R": {
+            "origem": "EUA",
+            "destino": "Mexico",
+            "milhas": 1000,
+            "preco": 800.0,
+            "aeronave": "Boeing 737",
+            "assentos": 40
+        },
+        "ED204": {
+            "origem": "EUA",
+            "destino": "Canada",
+            "milhas": 800,
+            "preco": 600.0,
+            "aeronave": "Embraer 195",
+            "assentos": 30
+        },
+        "ED204R": {
+            "origem": "Canada",
+            "destino": "EUA",
+            "milhas": 800,
+            "preco": 600.0,
+            "aeronave": "Embraer 195",
+            "assentos": 30
+        },
+        "ED205": {
+            "origem": "Sao Paulo",
+            "destino": "Minas Gerais",
+            "milhas": 600,
+            "preco": 500.0,
+            "aeronave": "Embraer 190",
+            "assentos": 80
+        },
+        "ED205R": {
+            "origem": "Minas Gerais",
+            "destino": "Sao Paulo",
+            "milhas": 600,
+            "preco": 500.0,
+            "aeronave": "Embraer 190",
+            "assentos": 80
+        },
+        "ED208": {
+            "origem": "Sao Paulo",
+            "destino": "Rio Grande do Sul",
+            "milhas": 1100,
+            "preco": 1200.0,
+            "aeronave": "Latam",
+            "assentos": 40
+        },
+        "ED208R": {
+            "origem": "Rio Grande do Sul",
+            "destino": "Sao Paulo",
+            "milhas": 1100,
+            "preco": 1200.0,
+            "aeronave": "Latam",
+            "assentos": 40
         }
     },
     "logins": [

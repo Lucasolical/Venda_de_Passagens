@@ -20,5 +20,5 @@ def testegrafo():
         g.vs[i]["label"] = cidades[i]
     print(g.vs["label"])
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
     testegrafo()

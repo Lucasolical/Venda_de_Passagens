@@ -26,7 +26,30 @@ Ap_Raiz_Nome = None # Armazena a Raiz da Árvore B de Nome. Ponto de entrada par
 DF_Clientes = None # Armazena os dados dos clientes em um DataFrame Pandas (cópia dos dados do clientes.csv).
 
 
+# Variaveis para utilizar os grafos
+Grafo_Voos = None
+Mapa_Cidades = None
+
+from utils_grafo import construir_grafo_voos, buscar_melhor_conexao, gerar_diagrama_grafo
+
+
+def carregar_dados():
+    """Função auxiliar para carregar dados do JSON (voos e logins)."""
+    with open(json_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 # --- FUNÇÕES DE CONSTRUÇÃO DE ÍNDICE (ÁRVORE B) ---
+
+def inicializar_grafo():
+    """Função que constrói o Grafo de Voos."""
+    global Grafo_Voos, Mapa_Cidades
+    dados = carregar_dados()
+    # Constrói o grafo se houver voos
+    if "voos" in dados:
+        Grafo_Voos, Mapa_Cidades = construir_grafo_voos(dados["voos"])
+    print("Grafo de Voos carregado!")
+
+
 
 def _construir_arvore(df, ordem, key_col_name, bt_module):
     """Função auxiliar para construir uma Árvore B a partir de um DataFrame (DF_Clientes)."""
@@ -94,12 +117,8 @@ def inicializar_arvores():
 
 inicializar_arvores() # A Árvore B é carregada logo na inicialização do sistema.
 
-
-def carregar_dados():
-    """Função auxiliar para carregar dados do JSON (voos e logins)."""
-    with open(json_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
+    
+inicializar_grafo() # Grafo carregado na inicializacao do sistema
 # --------------------------------------------------------------------------------------------------
 # --- ROTAS (ENDPOINTS) DO FLASK ---
 # --------------------------------------------------------------------------------------------------
@@ -609,3 +628,40 @@ def ver_milhas(cpf):
     
     return render_template("milhas.html", milhas_saldo=milhas_saldo, cpf=cpf)
 
+@app.route("/simular_conexoes", methods=["GET", "POST"])
+def simular_conexoes():
+    global Grafo_Voos, Mapa_Cidades
+    
+    cpf = request.args.get('cpf')
+    dados = carregar_dados()
+    voos_json = dados["voos"]
+    
+    if Grafo_Voos is None:
+         inicializar_grafo()
+
+    resultado = None
+    mensagem = None
+    origem = ""
+    destino = ""
+    diagrama_html = None
+    
+    if request.method == "POST" and Grafo_Voos is not None:
+        origem = request.form.get("origem", "").strip()
+        destino = request.form.get("destino", "").strip()
+        
+        if origem and destino:
+            resultado, mensagem = buscar_melhor_conexao(Grafo_Voos, Mapa_Cidades, voos_json, origem, destino)
+    
+    # Gera o diagrama (SEMPRE): destaca a rota se houver resultado, senão mostra o grafo completo
+    trajeto = resultado['trajeto'] if (resultado and 'trajeto' in resultado) else None
+    
+    # IMPORTANTE: A função gerar_diagrama_grafo agora aceita (dados_voos, trajeto)
+    diagrama_html = gerar_diagrama_grafo(voos_json, trajeto)
+    
+    return render_template("conexoes.html", 
+                            resultado=resultado, 
+                            mensagem=mensagem, 
+                            origem=origem, 
+                            destino=destino,
+                            cpf=cpf,
+                            diagrama_html=diagrama_html)
