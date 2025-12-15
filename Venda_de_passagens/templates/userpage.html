@@ -29,18 +29,30 @@
                 <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
                 Sair
                 </a>
-                </a>
             </div>
         </div>
     </nav>
 
     <div class="container my-5">
-        <div class="card p-4 shadow-sm mb-4"> 
-        <h3 class="mb-3">Simulação de Rotas</h3>
-        <a href="{{ url_for('simular_conexoes') }}?cpf={{ cpf }}" class="btn btn-info w-100">
-            Simular Conexões (Grafo)
-        </a>
+        
+        <div class="card p-4 shadow-sm mb-4 bg-primary text-white"> 
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">🤔 Indeciso?</h3>
+                    <p class="mb-0">Use nossa Inteligência Artificial para descobrir seu próximo destino.</p>
+                </div>
+                <a href="{{ url_for('recomendacao_ia', cpf=cpf) }}" class="btn btn-light fw-bold shadow">
+                    Falar com IA 🤖
+                </a>
+            </div>
         </div>
+        <div class="card p-4 shadow-sm mb-4"> 
+            <h3 class="mb-3">Simulação de Rotas</h3>
+            <a href="{{ url_for('simular_conexoes') }}?cpf={{ cpf }}" class="btn btn-info w-100">
+                Simular Conexões (Grafo)
+            </a>
+        </div>
+
         <div class="card p-4 shadow-sm">
             <h3 class="mb-3">Filtrar Pesquisa de Voos</h3>
             
@@ -87,6 +99,7 @@
                         <th scope="col">Preço (R$)</th>
                         <th scope="col">Aeronave</th>
                         <th scope="col">Assentos</th>
+                        <th scope="col">Ações</th>
                     </tr>
                 </thead>
                 <tbody>

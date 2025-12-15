@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>IA Travel Advisor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .chat-box {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .ai-avatar {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body style="background-color: #e9ecef;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('user_page', cpf=cpf) }}">Linhas Aéreas ED-II</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarApp">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarApp">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user_page', cpf=cpf) }}">Voos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('meus_voos', cpf=cpf) }}">Minhas Reservas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ver_milhas', cpf=cpf) }}">Milhas</a>
+                    </li>
+                </ul>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <div class="text-center mb-4">
+                    <div class="ai-avatar">🤖</div>
+                    <h2>Assistente Virtual ED-II</h2>
+                    
+                    {% if not recomendacao %}
+                        <p class="lead">Não sabe para onde ir? Me diga o que você gosta!</p>
+                    {% else %}
+                        <p class="lead text-success">Encontrei o destino perfeito para você!</p>
+                    {% endif %}
+                </div>
+
+                {% if not recomendacao %}
+                <div class="chat-box bg-white">
+                    <form action="{{ url_for('recomendacao_ia', cpf=cpf) }}" method="POST">
+                        <input type="hidden" name="cpf" value="{{ cpf }}">
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Descreva sua viagem dos sonhos:</strong></label>
+                            <textarea class="form-control" name="perfil" rows="3" placeholder="Ex: Quero um lugar barato, com praia, natureza e que seja romântico..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Pedir Recomendação</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if recomendacao %}
+                <div class="card border-success shadow">
+                    <div class="card-header bg-success text-white">
+                        Recomendação da IA
+                    </div>
+                    <div class="card-body text-center p-5">
+                        <h1 class="display-4 text-success fw-bold mb-3">{{ destino_sugerido }}</h1>
+                        <p class="card-text fs-4 fst-italic mb-4">"{{ recomendacao }}"</p>
+                        
+                        <div class="d-grid gap-2">
+                            <form action="{{ url_for('simular_conexoes') }}?cpf={{ cpf }}" method="POST">
+                                <input type="hidden" name="origem" value="Sao Paulo">
+                                <input type="hidden" name="destino" value="{{ destino_sugerido }}">
+                                <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm">
+                                    ✈️ Simular Rota para {{ destino_sugerido }}
+                                </button>
+                            </form>
+
+                            <a href="{{ url_for('recomendacao_ia', cpf=cpf) }}" class="btn btn-outline-secondary mt-2">
+                                Fazer outra consulta
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

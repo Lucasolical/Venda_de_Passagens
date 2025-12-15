@@ -8,7 +8,7 @@ import json # Biblioteca para trabalhar com arquivos JSON (onde estão voos e lo
 import pandas as pd # Biblioteca poderosa para manipulação de dados em tabela (DataFrame), usada para clientes.
 import datetime # NOVO: Necessário para registrar a data da compra/reserva.
 
-
+from groq import Groq # Importar o groq para utilizar o chatbot
 
 # Importa as implementações customizadas da Árvore B para otimizar diferentes buscas:
 import arvorePesquisaCPF as bt_cpf # Árvore B indexada por CPF (chave numérica).
@@ -665,3 +665,96 @@ def simular_conexoes():
                             destino=destino,
                             cpf=cpf,
                             diagrama_html=diagrama_html)
+
+
+# ------------------------------------------------------------------
+# --- ROTA DO CHATBOT (IA - VERSÃO GEMINI) ---
+# ------------------------------------------------------------------
+# Não esqueça de ter o import no topo do arquivo:
+# from groq import Groq
+
+@app.route("/recomendacao_ia", methods=["GET", "POST"])
+def recomendacao_ia():
+    # 1. CAPTURA O CPF DA URL (Essencial para a Navbar funcionar)
+    cpf = request.args.get('cpf')
+
+    dados = carregar_dados()
+    voos = dados["voos"]
+    
+    # 2. Extrair lista única de destinos disponíveis
+    destinos_disponiveis = set()
+    for voo in voos.values():
+        destinos_disponiveis.add(voo['destino'])
+    lista_destinos_str = ", ".join(destinos_disponiveis)
+
+    recomendacao = None
+    destino_sugerido = None
+    
+    if request.method == "POST":
+        perfil_usuario = request.form["perfil"]
+        
+        # --- TENTATIVA 1: IA REAL (GROQ) ---
+        try:
+            # Substitua pela sua chave da Groq
+            client = Groq(api_key="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")
+
+            completion = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": f"Você é um guia de viagens. Destinos possíveis: {lista_destinos_str}. Responda estritamente no formato:\nDESTINO: [Nome]\nMOTIVO: [Texto curto]"
+                    },
+                    {
+                        "role": "user",
+                        "content": perfil_usuario
+                    }
+                ]
+            )
+            
+            # Pega o texto da resposta
+            resposta_texto = completion.choices[0].message.content
+            
+            # Processa a resposta para separar Destino e Motivo
+            linhas = resposta_texto.split('\n')
+            for linha in linhas:
+                if "DESTINO:" in linha:
+                    # Limpa formatação extra (como negrito **)
+                    destino_sugerido = linha.replace("DESTINO:", "").replace("*", "").strip()
+                if "MOTIVO:" in linha:
+                    recomendacao = linha.replace("MOTIVO:", "").replace("*", "").strip()
+            
+            # Se a IA não responder no formato certo, força erro para cair na simulação
+            if not destino_sugerido:
+                raise Exception("Formato inválido recebido da IA")
+
+        except Exception as e:
+            # --- TENTATIVA 2: MODO DE SEGURANÇA (SIMULAÇÃO) ---
+            # Se a Groq falhar (sem internet, chave errada, limite), cai aqui.
+            print(f"IA falhou ({e}), ativando modo simulação.") 
+            
+            p = perfil_usuario.lower()
+            
+            # Lógica de fallback baseada em palavras-chave
+            if "frio" in p or "neve" in p or "esquiar" in p or "inverno" in p:
+                destino_sugerido = "Canada"
+                recomendacao = "Baseado no seu gosto pelo frio, o Canadá oferece as melhores paisagens de inverno e montanhas."
+            elif "praia" in p or "sol" in p or "mar" in p or "calor" in p:
+                destino_sugerido = "Bahamas"
+                recomendacao = "Para quem busca sol e mar, as Bahamas são o destino paradisíaco ideal com águas cristalinas."
+            elif "compras" in p or "cidade" in p or "moderno" in p or "eua" in p:
+                destino_sugerido = "EUA"
+                recomendacao = "Os EUA são a escolha perfeita para quem busca modernidade, compras e grandes metrópoles."
+            elif "historia" in p or "cultura" in p or "antigo" in p:
+                destino_sugerido = "Mexico"
+                recomendacao = "Rico em cultura e história, o México proporcionará uma viagem inesquecível pelas suas raízes."
+            else:
+                # Padrão genérico se nada for detectado
+                destino_sugerido = "Sao Paulo"
+                recomendacao = "São Paulo é a metrópole completa que oferece gastronomia, cultura e agito urbano."
+
+    # Retorna o template passando o CPF para manter a sessão visual
+    return render_template("chat.html", 
+                           recomendacao=recomendacao, 
+                           destino_sugerido=destino_sugerido,
+                           cpf=cpf)
